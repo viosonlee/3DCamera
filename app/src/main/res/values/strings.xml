@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">3DCamera</string>
+    <string name="picture">拍摄</string>
+    <string name="description_info">Info</string>
+    <string name="request_permission">3D相机需要权限“相机”才能运行</string>
+    <string name="intro_message">3D相机</string>
+</resources>
