@@ -78,19 +78,20 @@ public class CameraFragment extends Camera2BasicFragment implements View.OnClick
             Log.d("take", state + "");
             state = STATE_TAKING;
             btn.setEnabled(false);
+            btn.setText("请稍候");
         }
     }
 
     @Override
     protected void onFileSaved() {
         if (!second) {
+            Toast.makeText(getActivity(), "向右平移1厘米点击拍照", Toast.LENGTH_SHORT).show();
             fileName = PIC_2;
             second = true;
-            Toast.makeText(getActivity(), "向右平移1厘米点击拍照", Toast.LENGTH_SHORT).show();
         } else {
+            Toast.makeText(getActivity(), "正在合成。。。", Toast.LENGTH_SHORT).show();
             fileName = PIC_1;
             second = false;
-            Toast.makeText(getActivity(), "正在合成。。。", Toast.LENGTH_SHORT).show();
             bitmap1 = BitmapCompress.getSmallBitmap(dir.getPath() + "/" + PIC_1);
             bitmap2 = BitmapCompress.getSmallBitmap(dir.getPath() + "/" + PIC_2);
             Bitmap bitmap = BitmapUtil.fix2Bitmap(bitmap1, bitmap2, false);
@@ -98,6 +99,7 @@ public class CameraFragment extends Camera2BasicFragment implements View.OnClick
         }
         state = STATE_NORMAL;
         btn.setEnabled(true);
+        btn.setText("拍摄");
     }
 
 }
