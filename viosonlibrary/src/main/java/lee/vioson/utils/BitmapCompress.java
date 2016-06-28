@@ -8,8 +8,14 @@ import android.media.ExifInterface;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.squareup.picasso.Transformation;
+
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 图片压缩
@@ -259,5 +265,63 @@ public class BitmapCompress {
         return view.getDrawingCache(true);
     }
 
+    private static Transformation transformationOriginal = null;
+
+    /**
+     * Picsco图片大小等比例缩放
+     * @param v
+     * @return
+     */
+    public static Transformation getTransformation(final View v) {
+        /**
+         * 图片大小等比例缩放
+         */
+        transformationOriginal = new Transformation() {
+
+            @Override
+            public Bitmap transform(Bitmap source) {
+                int targetWidth = v.getWidth();
+                double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
+                int targetHeight = (int) (targetWidth * aspectRatio);
+                Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+                if (result != source) {
+                    // Same bitmap is returned if sizes are the same
+                    source.recycle();
+                }
+                return result;
+            }
+
+            @Override
+            public String key() {
+                return "transformation" + " desiredWidth";
+            }
+        };
+
+        return transformationOriginal;
+    }
+
+    /**
+     * @param path
+     * @param mScreenWidth
+     * @param mScreenHeight
+     * @return
+     * @throws IOException
+     */
+    public static Bitmap compressAndGetImgBitmap(String path, int mScreenWidth, int mScreenHeight)
+            throws IOException {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+
+        options.inTempStorage = new byte[100 * 1024];
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inSampleSize = 8;
+        options.inJustDecodeBounds = false;
+        options.inPurgeable = true;// 允许可清除
+        options.inInputShareable = true;// 以上options的两个属性必须联合使用才会有效果
+
+        InputStream is = new BufferedInputStream(new FileInputStream(
+                new File(path)));
+
+        return  BitmapFactory.decodeStream(is, null, options);
+    }
 
 }
